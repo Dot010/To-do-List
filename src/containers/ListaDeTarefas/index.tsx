@@ -1,9 +1,27 @@
-import exp from 'constants'
+import { Container } from './styles'
+import Tarefa from '../../components/Tarefa'
 
 const ListaDeTarefas = () => (
-  <main>
+  <Container>
     <p>2 tarefas maracadas como: &quot;categoria&quot; e &quot;termo&quot;</p>
-  </main>
+    <ul>
+      <li>
+        <Tarefa />
+      </li>
+      <li>
+        <Tarefa />
+      </li>
+      <li>
+        <Tarefa />
+      </li>
+      <li>
+        <Tarefa />
+      </li>
+      <li>
+        <Tarefa />
+      </li>
+    </ul>
+  </Container>
 )
 
 export default ListaDeTarefas
