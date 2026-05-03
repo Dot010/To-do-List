@@ -1,4 +1,22 @@
-import styled from 'styled-components'
+import styled, { css, keyframes } from 'styled-components'
+
+const pulsar = keyframes`
+0%, 100% {transform: scale(1)}
+50% {transform: scale(1.06)}
+`
+
+const shake = keyframes`
+0%, 100% {transform: translateX(0)}
+20% {transform: translateX(-4px)}
+40% {transform: translateX(4px)}
+60% {transform: translateX(-3px)}
+80% {transform: translateX(3px)}
+`
+
+const brilho = keyframes`
+0%, 100% {box-shadow: 0 0 0 0 rgba(99, 110, 114, 0)}
+50% {box-shadow: 0 0 0 4px rgba(99, 110, 114, 0.4)}
+`
 
 export const Card = styled.div`
   background-color: #fcfcfc;
@@ -44,7 +62,11 @@ export const BarraAcoes = styled.div`
   padding-top: 16px;
 `
 
-export const Botao = styled.button`
+export const Botao = styled.button<{
+  $variant?: 'danger' | 'primary' | 'secondary'
+  $disabled?: boolean
+  $active?: boolean
+}>`
   font-weight: bold;
   font-size: 12px;
   color: #fff;
@@ -54,4 +76,33 @@ export const Botao = styled.button`
   background-color: #2f3640;
   border-radius: 8px;
   margin-right: 8px;
+
+  ${({ $variant, $active }) =>
+    $variant === 'danger' &&
+    css`
+      background-color: #e84118;
+      ${$active &&
+      css`
+        animation: ${shake} 1.2s ease;
+      `};
+    `}
+  ${({ $variant, $active }) =>
+    $variant === 'primary' &&
+    css`
+      background-color: #0097e6;
+      ${$active &&
+      css`
+        animation: ${pulsar} 1.5s ease;
+      `};
+    `}
+
+     ${({ $variant, $active }) =>
+    $variant === 'secondary' &&
+    css`
+      background-color: #42b883;
+      ${$active &&
+      css`
+        animation: ${brilho} 2s ease;
+      `};
+    `}
 `
