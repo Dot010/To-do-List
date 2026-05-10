@@ -1,5 +1,23 @@
 import styled, { css, keyframes } from 'styled-components'
 
+import * as enums from '../../utils/enums/tarefa'
+type TagProps = {
+  prioridade?: enums.Prioridade
+  status?: enums.Status
+  paramentro: 'status' | 'prioridade'
+}
+
+function retornaCorDeFundo(props: TagProps): string {
+  if (props.paramentro === 'prioridade') {
+    if (props.prioridade === enums.Prioridade.URGENTE) return '#e84118'
+    if (props.prioridade === enums.Prioridade.IMPORTANTE) return '#0097e6'
+  } else {
+    if (props.status === enums.Status.PENDENTE) return '#e1b12c'
+    if (props.status === enums.Status.CONCLUIDA) return '#44bd32'
+  }
+  return '#7f8fa6'
+}
+
 const pulsar = keyframes`
 0%, 100% {transform: scale(1)}
 50% {transform: scale(1.06)}
@@ -32,12 +50,12 @@ export const Titulo = styled.h2`
   margin-bottom: 16px;
 `
 
-export const Tag = styled.span`
+export const Tag = styled.span<TagProps>`
   padding: 4px 8px;
   font-size: 10px;
   font-weight: bold;
   color: #fff;
-  background-color: #e1a32a;
+  background-color: ${(props) => retornaCorDeFundo(props)};
   border-radius: 8px;
   margin-right: 16px;
   display: inline-block;
