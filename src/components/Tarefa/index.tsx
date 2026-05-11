@@ -1,16 +1,36 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import * as S from './styles'
 
 import * as enums from '../../utils/enums/tarefa'
 
-import { remover } from '../../store/reducers/tarefa'
+import { remover, editar } from '../../store/reducers/tarefa'
 import TarefaClass from '../../models/Tarefa'
+
 type Props = TarefaClass
-const Tarefa = ({ descricao, prioridade, status, titulo, id }: Props) => {
+
+const Tarefa = ({
+  descricao: descricaoOriginal,
+  prioridade,
+  status,
+  titulo,
+  id
+}: Props) => {
   const dispatch = useDispatch()
   const [estaEditando, setEstaEditando] = useState(false)
   const [animando, setAnimando] = useState<string | null>(null)
+  const [descricao, setDescricao] = useState('')
+
+  useEffect(() => {
+    if (descricaoOriginal.length > 0) {
+      setDescricao(descricaoOriginal)
+    }
+  }, [descricaoOriginal])
+
+  function cancelarEdicao() {
+    setEstaEditando(false)
+    setDescricao(descricaoOriginal)
+  }
 
   const acionar = (variante: string, callback?: () => void) => {
     setAnimando(variante)
@@ -19,6 +39,7 @@ const Tarefa = ({ descricao, prioridade, status, titulo, id }: Props) => {
       callback?.()
     }, 1200)
   }
+
   return (
     <S.Card>
       <S.Titulo>{titulo}</S.Titulo>
@@ -28,14 +49,32 @@ const Tarefa = ({ descricao, prioridade, status, titulo, id }: Props) => {
       <S.Tag paramentro="status" status={status}>
         {status}
       </S.Tag>
-      <S.Descricao value={descricao} />
+      <S.Descricao
+        disabled={!estaEditando}
+        value={descricao}
+        onChange={(evento) => setDescricao(evento.target.value)}
+      />
       <S.BarraAcoes>
         {estaEditando ? (
           <>
             <S.Botao
               $variant="secondary"
               $active={animando === 'secondary'}
-              onClick={() => acionar('secondary', () => setEstaEditando(false))}
+              onClick={() =>
+                acionar('secondary', () => {
+                  // ✅ block body
+                  dispatch(
+                    editar({
+                      descricao,
+                      id,
+                      prioridade,
+                      status,
+                      titulo
+                    })
+                  )
+                  setEstaEditando(false)
+                })
+              }
             >
               Salvar
             </S.Botao>
@@ -43,7 +82,11 @@ const Tarefa = ({ descricao, prioridade, status, titulo, id }: Props) => {
             <S.Botao
               $variant="danger"
               $active={animando === 'danger'}
-              onClick={() => acionar('danger', () => setEstaEditando(false))}
+              onClick={() =>
+                acionar('danger', () => {
+                  cancelarEdicao()
+                })
+              }
             >
               Cancelar
             </S.Botao>
@@ -63,6 +106,8 @@ const Tarefa = ({ descricao, prioridade, status, titulo, id }: Props) => {
               onClick={() => {
                 acionar('danger')
                 dispatch(remover(id))
+                setEstaEditando(false)
+                setDescricao(descricaoOriginal)
               }}
             >
               Remover
@@ -75,7 +120,6 @@ const Tarefa = ({ descricao, prioridade, status, titulo, id }: Props) => {
 }
 
 export default Tarefa
-
 // { condicao ? tratamento verdadeiro: exceção }
 
 // if (condicao) {
